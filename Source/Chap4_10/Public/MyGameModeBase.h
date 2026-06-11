@@ -13,4 +13,6 @@ class CHAP4_10_API AMyGameModeBase : public AGameModeBase
 
 public:
 	AMyGameModeBase();
+
+	virtual void BeginPlay() override;	
 };

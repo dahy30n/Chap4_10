@@ -6,3 +6,9 @@
 AMyGameModeBase::AMyGameModeBase()
 {
 }
+
+void AMyGameModeBase::BeginPlay()
+{
+	Super::BeginPlay();
+	UE_LOG(LogTemp, Warning, TEXT("[GameMode BeginPlay] Name: %s / NetMode: %s"), *GetName(), *GetNetModeString(GetNetMode()));
+}	

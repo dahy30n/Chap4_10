@@ -15,6 +15,24 @@ void AMyPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
+	FString NetModeString; 
+	switch (GetNetMode()) 
+	{ 
+		case NM_Standalone: NetModeString = TEXT("Standalone"); 
+			break; 
+		case NM_Client: NetModeString = TEXT("Client"); 
+			break; 
+		case NM_ListenServer: NetModeString = TEXT("ListenServer"); 
+			break; 
+		case NM_DedicatedServer: NetModeString = TEXT("DedicatedServer"); 
+			break; 
+		default: NetModeString = TEXT("Unknown"); 
+			break; 
+	} 
+	UE_LOG(LogTemp, Warning, TEXT("[PlayerController BeginPlay] Name: %s / NetMode: %s / IsLocalController: %s"), *GetName(), *NetModeString, IsLocalController() ? TEXT("true") : TEXT("false"));
+
+	if (!IsLocalController()) return;
+
 	if (IsLocalController() && ChatInputWidgetClass)
 	{
 		ChatInputWidget = CreateWidget<UUserWidget>(this, ChatInputWidgetClass);

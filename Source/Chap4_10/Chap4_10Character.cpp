@@ -54,6 +54,27 @@ AChap4_10Character::AChap4_10Character()
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 }
 
+void AChap4_10Character::BeginPlay()
+{
+	Super::BeginPlay();
+	
+	FString NetModeString; 
+	switch (GetNetMode()) 
+	{ 
+		case NM_Standalone: NetModeString = TEXT("Standalone"); 
+			break; 
+		case NM_Client: NetModeString = TEXT("Client");
+			break; 
+		case NM_ListenServer: NetModeString = TEXT("ListenServer"); 
+			break; 
+		case NM_DedicatedServer: NetModeString = TEXT("DedicatedServer"); 
+			break; 
+		default: NetModeString = TEXT("Unknown"); 
+			break; 
+	} 
+	UE_LOG(LogTemp, Warning, TEXT("[Character BeginPlay] Name: %s / NetMode: %s / HasAuthority: %s"), *GetName(), *NetModeString, HasAuthority() ? TEXT("true") : TEXT("false"));
+}	
+
 //////////////////////////////////////////////////////////////////////////
 // Input
 
