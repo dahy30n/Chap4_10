@@ -23,9 +23,17 @@ public:
 	void SetChatMessageString(const FString& NewMessage);
 	
 	UFUNCTION(BlueprintCallable, Category = "Chat")
-	void PrintChatMessageString();
+	void PrintChatMessageString(const FString& ChatMessage);
 
 	bool bShowMouseCursor;
+
+	//Server RPC to send chat message to the server
+	UFUNCTION(Server, Reliable) 
+	void ServerSendChatMessage(const FString& ChatMessage);
+
+	UFUNCTION(Client, Reliable)
+	void ClientPrintChatMessage(const FString& ChatMessage);
+
 protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Chat")

@@ -3,6 +3,7 @@
 
 #include "MyPlayerController.h"
 
+#include "EngineUtils.h"
 #include "Blueprint/UserWidget.h"
 #include "Kismet/KismetSystemLibrary.h"
 
@@ -52,22 +53,48 @@ void AMyPlayerController::BeginPlay()
 void AMyPlayerController::SetChatMessageString(const FString& NewMessage)
 {
 	ChatMessageString = NewMessage;
-	PrintChatMessageString();
+
+	if (!IsLocalController()) return;
+	ServerSendChatMessage(ChatMessageString);
+
 }
 
-void AMyPlayerController::PrintChatMessageString()
+void AMyPlayerController::PrintChatMessageString(const FString& ChatMessage)
 {
-	if (ChatMessageString.IsEmpty())
+	if (ChatMessage.IsEmpty())
 	{
 		return;
 	}
 
 	UKismetSystemLibrary::PrintString(
 		this,
-		ChatMessageString,
+		ChatMessage,
 		true,
 		true,
 		FLinearColor::Green,
 		5.0f
 	);
 }
+
+void AMyPlayerController::ClientPrintChatMessage_Implementation(const FString& ChatMessage)
+{
+	PrintChatMessageString(ChatMessage);
+}
+
+void AMyPlayerController::ServerSendChatMessage_Implementation(const FString& ChatMessage) 
+{
+	if (ChatMessage.IsEmpty()) return;
+
+	UWorld* World = GetWorld();
+	if (World == nullptr) return;
+
+	for (TActorIterator<AMyPlayerController> It(World); It; ++It)
+	{
+		AMyPlayerController* PC = *It;
+		if (IsValid(PC)) 
+		{
+			PC->ClientPrintChatMessage(ChatMessage);
+		}
+	}
+}
+

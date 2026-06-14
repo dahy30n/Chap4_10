@@ -48,7 +48,7 @@ public:
 	AChap4_10Character();
 
 	virtual void BeginPlay() override;
-	
+
 
 protected:
 
