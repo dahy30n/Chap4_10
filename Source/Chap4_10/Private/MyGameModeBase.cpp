@@ -135,12 +135,6 @@ FString AMyGameModeBase::RunBaseballTurn(AController* PlayerController, const FS
 
 	FString Result = CheckAnswer(Input);
 
-	FString TryText = FString::Printf( // FString::Printf() 자체가 FString을 만들어서 반환하는 함수
-		TEXT("[%d / %d] "),
-		MyPlayerState->GetCurrentTryCount(),
-		MyPlayerState->GetMaxTryCount()
-	);
-
 	if (Result == TEXT("3S0B"))
 	{
 		//전체 리셋
@@ -159,7 +153,7 @@ FString AMyGameModeBase::RunBaseballTurn(AController* PlayerController, const FS
 
 		GenerateAnswerNumbers();
 
-		return TryText + TEXT("\n\nWIN! 게임을 다시 시작합니다.");
+		return TEXT("\n\nWIN! 게임을 다시 시작합니다.");
 	}
 
 	//draw
@@ -197,10 +191,10 @@ FString AMyGameModeBase::RunBaseballTurn(AController* PlayerController, const FS
 
 		GenerateAnswerNumbers();
 
-		return TryText + Result + TEXT("\n\nDRAW! 게임을 다시 시작합니다.");
+		return Result + TEXT("\n\nDRAW! 게임을 다시 시작합니다.");
 	}
 
-	return TryText + Result;
+	return Result;
 }
 
 void AMyGameModeBase::PostLogin(APlayerController* NewPlayer)

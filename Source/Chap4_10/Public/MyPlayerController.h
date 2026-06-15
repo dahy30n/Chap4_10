@@ -46,4 +46,8 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Chat")
 	FString ChatMessageString;
 
+public: //replication test
+
+	int32 GetCurrentTryCountFromPlayerState() const;
+
 };

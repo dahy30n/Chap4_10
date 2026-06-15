@@ -20,8 +20,10 @@ public:
 
 	bool CanTry() const;
 
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 private:
-	UPROPERTY()
+	UPROPERTY(Replicated) //replication
 	int32 CurrentTryCount;
 
 	UPROPERTY()

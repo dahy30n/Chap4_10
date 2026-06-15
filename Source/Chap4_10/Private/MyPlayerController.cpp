@@ -56,6 +56,21 @@ void AMyPlayerController::BeginPlay()
 	bShowMouseCursor = true;
 }
 
+int32 AMyPlayerController::GetCurrentTryCountFromPlayerState() const
+{
+	AMyPlayerState* MyPlayerState = GetPlayerState<AMyPlayerState>();
+
+	if (MyPlayerState == nullptr)
+	{
+		return 0;
+	}
+
+	int32 CurrentCount = MyPlayerState->GetCurrentTryCount();
+	int32 MaxCount = MyPlayerState->GetMaxTryCount();
+
+	return MaxCount - CurrentCount;
+}
+
 void AMyPlayerController::SetChatMessageString(const FString& NewMessage)
 {
 	ChatMessageString = NewMessage;
@@ -98,6 +113,9 @@ void AMyPlayerController::ServerSendChatMessage_Implementation(const FString& Ch
 
 	FString ResultMessage = MyGameMode->RunBaseballTurn(this, ChatMessage);
 
+	int32 RemainCount = GetCurrentTryCountFromPlayerState();
+
+	ResultMessage += FString::Printf(TEXT("\n남은 횟수: %d"), RemainCount);
 
 	//broadcast to all clients
 	UWorld* World = GetWorld();

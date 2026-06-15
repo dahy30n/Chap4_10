@@ -1,7 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "MyPlayerState.h"
+
+#include "Net/UnrealNetwork.h"
 
 AMyPlayerState::AMyPlayerState()
 {
@@ -17,6 +18,13 @@ int32 AMyPlayerState::GetCurrentTryCount() const
 int32 AMyPlayerState::GetMaxTryCount() const
 {
 	return MaxTryCount;
+}
+
+void AMyPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AMyPlayerState, CurrentTryCount);
 }
 
 void AMyPlayerState::AddTryCount()
