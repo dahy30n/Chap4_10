@@ -1,11 +1,17 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "MyPlayerController.h"
 
+#include "MyPlayerState.h"
+#include "GameFramework/PlayerState.h"
+
 #include "EngineUtils.h"
 #include "Blueprint/UserWidget.h"
 #include "Kismet/KismetSystemLibrary.h"
+
+#include "MyGameModeBase.h"
+#include "Kismet/GameplayStatics.h"
 
 AMyPlayerController::AMyPlayerController()
 {
@@ -85,16 +91,41 @@ void AMyPlayerController::ServerSendChatMessage_Implementation(const FString& Ch
 {
 	if (ChatMessage.IsEmpty()) return;
 
+	//result
+	AMyGameModeBase* MyGameMode = Cast<AMyGameModeBase>(UGameplayStatics::GetGameMode(this));
+
+	if (!MyGameMode) return;
+
+	FString ResultMessage = MyGameMode->RunBaseballTurn(this, ChatMessage);
+
+
+	//broadcast to all clients
 	UWorld* World = GetWorld();
 	if (World == nullptr) return;
 
-	for (TActorIterator<AMyPlayerController> It(World); It; ++It)
+	this->ClientPrintChatMessage(ChatMessage);
+	this->ClientPrintChatMessage(ResultMessage);
+
+	//전체 공지
+	if (ResultMessage.Contains(TEXT("WIN")) || ResultMessage.Contains(TEXT("DRAW")))
 	{
-		AMyPlayerController* PC = *It;
-		if (IsValid(PC)) 
+		for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
 		{
-			PC->ClientPrintChatMessage(ChatMessage);
+			AMyPlayerController* TargetPC = Cast<AMyPlayerController>(It->Get());
+
+			if (TargetPC)
+			{
+				AMyPlayerState* TargetPS = TargetPC->GetPlayerState<AMyPlayerState>();
+
+				if (TargetPS)
+				{
+					FString TargetPlayerName = TargetPS->GetPlayerName();
+					TargetPC->ClientPrintChatMessage(FString::Printf(TEXT("%s: %s"), *TargetPlayerName, *ResultMessage));
+				}
+			}
 		}
+
+		return;
 	}
 }
 

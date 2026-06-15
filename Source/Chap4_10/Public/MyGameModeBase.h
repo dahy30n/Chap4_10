@@ -15,4 +15,19 @@ public:
 	AMyGameModeBase();
 
 	virtual void BeginPlay() override;	
+
+	FString RunBaseballTurn(AController* PlayerController, const FString& Input);
+
+	virtual void PostLogin(APlayerController* NewPlayer) override;
+
+private:
+	int32 PlayerNumber = 1;
+
+	TArray<int32> AnswerNumbers;
+
+	void GenerateAnswerNumbers();
+
+	bool IsValidInput(const FString& Input, FString& ErrorMessage) const;
+
+	FString CheckAnswer(const FString& Input) const;
 };
